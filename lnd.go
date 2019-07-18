@@ -899,8 +899,12 @@ func waitForWalletPassword(grpcEndpoints, restEndpoints []net.Addr,
 				"password gRPC proxy started at %s",
 				lis.Addr(),
 			)
+      c:=cors.New(cors.Options{
+				AllowedOrigins: 	"http://localhost:8000",
+				AllowCredentials: true,
+			})
 			wg.Done()
-			srv.Serve(lis)
+      http.Serve(lis, c.Handler(mux))
 		}()
 	}
 

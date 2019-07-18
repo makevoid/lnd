@@ -52,6 +52,7 @@ import (
 	"github.com/lightningnetwork/lnd/signal"
 	"github.com/lightningnetwork/lnd/sweep"
 	"github.com/lightningnetwork/lnd/zpay32"
+	"github.com/rs/cors"
 	"github.com/tv42/zbase32"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
@@ -683,7 +684,13 @@ func (r *rpcServer) Start() error {
 
 		go func() {
 			rpcsLog.Infof("gRPC proxy started at %s", lis.Addr())
-			http.Serve(lis, mux)
+			rpcsLog.Infof("CORS enabled on addresses %s",
+			c:=cors.New(cors.Options{
+				// hardcoded - specific for Cordova
+				AllowedOrigins: "http://localhost:8000",
+				AllowCredentials: true,
+			})
+			http.Serve(lis, c.Handler(mux))
 		}()
 	}
 
