@@ -54,6 +54,8 @@ import (
 	"github.com/lightningnetwork/lnd/walletunlocker"
 	"github.com/lightningnetwork/lnd/watchtower"
 	"github.com/lightningnetwork/lnd/watchtower/wtdb"
+
+	"github.com/rs/cors"
 )
 
 const (
@@ -880,7 +882,14 @@ func waitForWalletPassword(grpcEndpoints, restEndpoints []net.Addr,
 		return nil, err
 	}
 
-	srv := &http.Server{Handler: mux}
+	origin := []string{"http://localhost:8000"}
+	c := cors.New(cors.Options{
+		AllowedOrigins: 	origin,
+		AllowCredentials: true,
+	})
+	handler := c.Handler(mux)
+
+	srv := &http.Server{Handler: handler}
 
 	for _, restEndpoint := range restEndpoints {
 		lis, err := lncfg.TLSListenOnAddress(restEndpoint, tlsConf)
@@ -899,12 +908,8 @@ func waitForWalletPassword(grpcEndpoints, restEndpoints []net.Addr,
 				"password gRPC proxy started at %s",
 				lis.Addr(),
 			)
-			c:=cors.New(cors.Options{
-				AllowedOrigins: 	"http://localhost:8000",
-				AllowCredentials: true,
-			})
 			wg.Done()
-			http.Serve(lis, c.Handler(mux))
+			srv.Serve(lis)
 		}()
 	}
 

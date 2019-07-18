@@ -684,10 +684,11 @@ func (r *rpcServer) Start() error {
 
 		go func() {
 			rpcsLog.Infof("gRPC proxy started at %s", lis.Addr())
-			rpcsLog.Infof("CORS enabled on addresses %s",
-			c:=cors.New(cors.Options{
+			rpcsLog.Infof("CORS enabled on address http://localhost:8000")
+			localHostOrigin := []string{"http://localhost:8000"}
+			c := cors.New(cors.Options{
 				// hardcoded - specific for Cordova
-				AllowedOrigins: "http://localhost:8000",
+				AllowedOrigins: 	localHostOrigin,
 				AllowCredentials: true,
 			})
 			http.Serve(lis, c.Handler(mux))
