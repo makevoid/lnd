@@ -885,6 +885,7 @@ func waitForWalletPassword(grpcEndpoints, restEndpoints []net.Addr,
 	origin := []string{"http://localhost:8000"}
 	c := cors.New(cors.Options{
 		AllowedOrigins: 	origin,
+		AllowedHeaders: []string{"Content-Type", "Grpc-Metadata-Macaroon"},
 		AllowCredentials: true,
 	})
 	handler := c.Handler(mux)
