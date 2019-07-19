@@ -691,7 +691,6 @@ func (r *rpcServer) Start() error {
 				AllowedOrigins: localHostOrigin,
 				AllowedHeaders: []string{"Content-Type", "Grpc-Metadata-Macaroon"},
 				AllowCredentials: true,
-				Debug: true,
 			})
 			http.Serve(lis, c.Handler(mux))
 		}()
